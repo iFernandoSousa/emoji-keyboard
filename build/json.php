@@ -39,14 +39,11 @@ foreach($emojiData as $key => $data) {
     foreach((array) $data->short_names as $short)
         $emoji->addShortname($short);
 
-
-
     $emoji->imageFile = $data->image;
     $emoji->sheetX = $data->sheet_x;
     $emoji->sheetY = $data->sheet_y;
 
-    if(!empty($data->skin_variations))
-        $emoji->skinVariantions = $data->skin_variations;
+    $emoji->addVariations($data->skin_variations);
 
     $unified[$data->unified] = $emoji;
 }
@@ -55,6 +52,12 @@ $newJson = json_encode(array_values($unified));
 
 $jsonFile = fopen("../emoji.json", "w") or die("Unable to open file!");
 fwrite($jsonFile, $newJson);
+fclose($jsonFile);
+
+include("../assets/nicejson.php");
+
+$jsonFile = fopen("../emoji-pretty.json", "w") or die("Unable to open file!");
+fwrite($jsonFile, json_format($newJson));
 fclose($jsonFile);
 
 $testJson = json_decode($newJson);
@@ -86,7 +89,7 @@ class Emoji {
 
     public $keywords; //short_names
 
-    public $skinVariantions = array();
+    public $skinVariations = array();
 
     public function addName($name) {
         $name = strtolower($name);
@@ -124,6 +127,18 @@ class Emoji {
         } else {
             if($this->shortname != $shortname && array_search($shortname, $this->shortnameAlternatives) === false)
                 $this->shortnameAlternatives[] = $shortname;
+        }
+    }
+
+    public function addVariations($variations) {
+        if(!empty($variations)) {
+            foreach((array)$variations as $variation) {
+                $this->skinVariations[] = array(
+                    "unicode"   => $variation->unified,
+                    "sheetX"    => $variation->sheet_x,
+                    "sheetY"    => $variation->sheet_y,
+                );
+            }
         }
     }
 }
