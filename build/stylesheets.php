@@ -13,8 +13,8 @@ foreach($sheets as $sheet) {
         copy("../emoji-data/". $fileName, "../img/".$fileName);
             
         fwrite($css, "
-.emoji-". $size ." .e{
-    background-image: url('/../img/'". $fileName .");
+.emoji-". $size ." .emoji{
+    background-image: url('/img/". $fileName ."');
     width: ". $size ."px;
     height: ". $size ."px;
     display: -moz-inline-stack;
