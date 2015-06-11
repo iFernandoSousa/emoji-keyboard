@@ -1,6 +1,6 @@
 
 .emoji-16 .emoji{
-    background-image: url('/img/sheet_twitter_16.png');
+    background-image: url('/src/img/img/sheet_emojione_16.png');
     width: 16px;
     height: 16px;
     display: -moz-inline-stack;
@@ -12,7 +12,7 @@
 
 
 .emoji-20 .emoji{
-    background-image: url('/img/sheet_twitter_20.png');
+    background-image: url('/src/img/img/sheet_emojione_20.png');
     width: 20px;
     height: 20px;
     display: -moz-inline-stack;
@@ -24,7 +24,7 @@
 
 
 .emoji-32 .emoji{
-    background-image: url('/img/sheet_twitter_32.png');
+    background-image: url('/src/img/img/sheet_emojione_32.png');
     width: 32px;
     height: 32px;
     display: -moz-inline-stack;
@@ -36,7 +36,7 @@
 
 
 .emoji-64 .emoji{
-    background-image: url('/img/sheet_twitter_64.png');
+    background-image: url('/src/img/img/sheet_emojione_64.png');
     width: 64px;
     height: 64px;
     display: -moz-inline-stack;

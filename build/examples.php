@@ -43,4 +43,4 @@ foreach($sheets as $sheet) {
         </html>");
 }
 ?>
-<link href="../css/emoji-apple.css" rel="stylesheet"
+<link href="../src/css/emoji-apple.css" rel="stylesheet"

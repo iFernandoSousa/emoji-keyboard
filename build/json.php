@@ -45,18 +45,20 @@ foreach($emojiData as $key => $data) {
 
     $emoji->addVariations($data->skin_variations);
 
+    $emoji->clean();
+
     $unified[$data->unified] = $emoji;
 }
 
 $newJson = json_encode(array_values($unified));
 
-$jsonFile = fopen("../emoji.json", "w") or die("Unable to open file!");
+$jsonFile = fopen("../src/emoji.json", "w") or die("Unable to open file!");
 fwrite($jsonFile, $newJson);
 fclose($jsonFile);
 
 include("../assets/nicejson.php");
 
-$jsonFile = fopen("../emoji-pretty.json", "w") or die("Unable to open file!");
+$jsonFile = fopen("../src/emoji-pretty.json", "w") or die("Unable to open file!");
 fwrite($jsonFile, json_format($newJson));
 fclose($jsonFile);
 
@@ -139,6 +141,13 @@ class Emoji {
                     "sheetY"    => $variation->sheet_y,
                 );
             }
+        }
+    }
+
+    public function clean() {
+        foreach($this as $var => $value) {
+            if(empty($value))
+                $this->$var = null;
         }
     }
 }
