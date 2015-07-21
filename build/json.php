@@ -52,13 +52,13 @@ foreach($emojiData as $key => $data) {
 
 $newJson = json_encode(array_values($unified));
 
-$jsonFile = fopen("../src/emoji.json", "w") or die("Unable to open file!");
+$jsonFile = fopen("../src/json/emoji.json", "w") or die("Unable to open file!");
 fwrite($jsonFile, $newJson);
 fclose($jsonFile);
 
 include("../assets/nicejson.php");
 
-$jsonFile = fopen("../src/emoji-pretty.json", "w") or die("Unable to open file!");
+$jsonFile = fopen("../src/json/emoji-pretty.json", "w") or die("Unable to open file!");
 fwrite($jsonFile, json_format($newJson));
 fclose($jsonFile);
 
@@ -68,6 +68,33 @@ if(json_last_error()) {
 } else {
     echo "Successfully updated emoji.json";
 }
+
+/** @var $emoji Emoji */
+$cats = new stdClass();
+foreach($unified as $emoji) {
+    $cat = $emoji->category;
+    if($cat) {
+        if(!isset($cats->$cat))
+            $cats->$cat = array();
+
+        array_push($cats->$cat, $emoji);
+    } else {
+        var_dump($emoji);
+    }
+}
+var_dump($cats);
+//Sort the cats for easy use.
+foreach($cats as $cat) {
+    usort($cat, function($a, $b) {
+        return strcmp($a->categoryOrder, $b->categoryOrder);
+    });
+}
+
+$newJson = json_encode(array_values($cats));
+
+$jsonFile = fopen("../src/json/categorized.json", "w") or die("Unable to open file!");
+fwrite($jsonFile, $newJson);
+fclose($jsonFile);
 
 
 class Emoji {
