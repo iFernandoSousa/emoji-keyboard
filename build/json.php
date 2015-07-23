@@ -88,7 +88,6 @@ foreach($unified as $emoji) {
             continue;
         } else {
             $cat = "other";
-            var_dump($emoji);
         }
         $emoji->category = $cat;
         $emoji->categoryOrder = UNKNOWN_EMOJI_CATEGORY_DEFAULT_ORDER;
@@ -104,23 +103,19 @@ foreach($unified as $emoji) {
         $name = (!empty($emoji->name)) ? $emoji->name : $emoji->shortname;
         if($name)
             $cats->$cat += array($name => $emoji->unicode);
-    } else {
-        var_dump($emoji);
     }
 
     unset($name, $cat);
 }
-var_dump($catsString);
+
 //Sort the cats for easy use.
 foreach($cats as $key => $cat) {
     $success = usort($cat, function($a, $b) {
         global $unified;
-//        var_dump($unified[$a]->categoryOrder, $unified[$b]->categoryOrder,($unified[$a]->categoryOrder > $unified[$b]->categoryOrder)   );
         return $unified[$a]->categoryOrder == $unified[$b]->categoryOrder ? 0 : ( $unified[$a]->categoryOrder > $unified[$b]->categoryOrder ) ? 1 : -1;
     });
     $cats->$key = $cat;
 }
-var_dump(json_encode($cats));
 
 $newJson = json_encode($cats);
 
