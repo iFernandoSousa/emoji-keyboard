@@ -1,0 +1,49 @@
+.emoji-keyboard {
+  background-color: #FFFFFF;
+  border: 1px solid #c9c3ba;
+  ul#tabs {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    li {
+      display: inline-block;
+      width: 20%;
+      padding: 4px 0;
+      border-bottom: 5px solid white;
+      text-align: center;
+      a {
+        text-decoration: none;
+        color: #000;
+      }
+    }
+    li:hover {
+      border-bottom-color: rgba(0, 102, 204, 0.7);
+      a {
+        color: rgba(0, 0, 0, 0.7);
+      }
+    }
+    li.selected {
+      border-bottom-color: rgba(0, 102, 204, 1);
+      a {
+        color: rgba(0, 0, 0, 1);
+      }
+    }
+  }
+  .tab-contents {
+    background-color: #EEE;
+
+    .tab-content {
+      padding: 0.5em;
+      max-height: 160px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      
+      i.emoji {
+        margin: 0.2em;
+      }
+    }
+    .tab-content.hide {
+      display: none;
+    }
+  }
+}

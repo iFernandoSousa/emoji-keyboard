@@ -1,4 +1,5 @@
 <?php
+const UNKNOWN_EMOJI_CATEGORY_DEFAULT_ORDER = 9999;
 $emojiData = json_decode(file_get_contents("../emoji-data/emoji.json"));
 $emojione = json_decode(file_get_contents("../emoji-data/emojione/emoji.json"));
 
@@ -14,7 +15,7 @@ foreach($emojione as $key => $data) {
     $emoji->addShortname(str_replace(":","",$data->shortname));
 
     $emoji->category = $data->category;
-    $emoji->categoryOrder = $data->category_order;
+    $emoji->categoryOrder = (int) $data->category_order;
 
     $emoji->keywords = $data->keywords;
 
@@ -49,6 +50,11 @@ foreach($emojiData as $key => $data) {
 
     $unified[$data->unified] = $emoji;
 }
+foreach($unified as $key => $emoji) {
+    if(!isset($emoji->sheetX) || !isset($emoji->sheetY)) {
+        unset($unified[$key]);
+    }
+}
 
 $newJson = json_encode(array_values($unified));
 
@@ -73,24 +79,50 @@ if(json_last_error()) {
 $cats = new stdClass();
 foreach($unified as $emoji) {
     $cat = $emoji->category;
-    if($cat) {
-        if(!isset($cats->$cat))
-            $cats->$cat = array();
 
-        array_push($cats->$cat, $emoji);
+    if(!$cat) {
+        if(strpos($emoji->shortname, "man") !== false) {
+            $cat = "emoticons";
+        } else if (strpos($emoji->name, "modifier") !== false) {
+            //We do not include modifiers in this list..
+            continue;
+        } else {
+            $cat = "other";
+            var_dump($emoji);
+        }
+        $emoji->category = $cat;
+        $emoji->categoryOrder = UNKNOWN_EMOJI_CATEGORY_DEFAULT_ORDER;
+    }
+
+
+    if($cat) {
+        if (!isset($cats->$cat)) {
+            $cats->$cat = array();
+            $catsString .= ",".$cat;
+        }
+
+        $name = (!empty($emoji->name)) ? $emoji->name : $emoji->shortname;
+        if($name)
+            $cats->$cat += array($name => $emoji->unicode);
     } else {
         var_dump($emoji);
     }
-}
-var_dump($cats);
-//Sort the cats for easy use.
-foreach($cats as $cat) {
-    usort($cat, function($a, $b) {
-        return strcmp($a->categoryOrder, $b->categoryOrder);
-    });
-}
 
-$newJson = json_encode(array_values($cats));
+    unset($name, $cat);
+}
+var_dump($catsString);
+//Sort the cats for easy use.
+foreach($cats as $key => $cat) {
+    $success = usort($cat, function($a, $b) {
+        global $unified;
+//        var_dump($unified[$a]->categoryOrder, $unified[$b]->categoryOrder,($unified[$a]->categoryOrder > $unified[$b]->categoryOrder)   );
+        return $unified[$a]->categoryOrder == $unified[$b]->categoryOrder ? 0 : ( $unified[$a]->categoryOrder > $unified[$b]->categoryOrder ) ? 1 : -1;
+    });
+    $cats->$key = $cat;
+}
+var_dump(json_encode($cats));
+
+$newJson = json_encode($cats);
 
 $jsonFile = fopen("../src/json/categorized.json", "w") or die("Unable to open file!");
 fwrite($jsonFile, $newJson);

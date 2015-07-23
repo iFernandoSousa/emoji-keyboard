@@ -1,5 +1,5 @@
 <?php
-$emoji = json_decode(file_get_contents("../src/emoji.json"));
+$emoji = json_decode(file_get_contents("../src/json/emoji.json"));
 
 $sheets = array("apple", "emojione", "google", "twitter");
 $sizes = array(16, 20, 32, 64);
