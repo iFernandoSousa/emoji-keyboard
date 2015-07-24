@@ -5,6 +5,8 @@ $emojione = json_decode(file_get_contents("../emoji-data/emojione/emoji.json"));
 
 $unified = array();
 
+//Set first half of unified emoji data using emojione's data
+
 foreach($emojione as $key => $data) {
     $emoji = new Emoji();
 
@@ -21,6 +23,9 @@ foreach($emojione as $key => $data) {
 
     $unified[$data->unicode] = $emoji;
 }
+
+//Set second half of unified emoji using the emoji-data resource
+
 foreach($emojiData as $key => $data) {
     if(!empty($unified[$data->unified])) {
         $emoji = $unified[$data->unified];
