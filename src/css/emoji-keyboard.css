@@ -30,7 +30,8 @@
       overflow-x: hidden;
       overflow-y: auto; }
       .emoji-keyboard .tab-contents .tab-content i.emoji {
-        margin: 0.2em; }
+        margin: 0.2em;
+        cursor: pointer; }
     .emoji-keyboard .tab-contents .tab-content.hide {
       display: none; }
 

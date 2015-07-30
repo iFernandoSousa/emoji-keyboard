@@ -35,7 +35,7 @@ emojiKeyboard.prototype.show = function () {
         content += "<div id='" + cat + "' class='tab-content'>";
 
         for (id in this.emoji[cat])
-            content += "<i class='emoji e" + this.emoji[cat][id] + "'></i>";
+            content += "<i class='emoji e" + this.emoji[cat][id] + "' x-emoji-unicode='"+ this.emoji[cat][id] +"'></i>";
 
         content += "</div>";
     }
@@ -44,6 +44,7 @@ emojiKeyboard.prototype.show = function () {
     content += "</div>";
 
     document.getElementById("data").innerHTML += "<div class='emoji-keyboard'>" + tabs + content + "</div>";
+
 
     // Make the tabs clickable.
     // Grab the tab links and content divs from the page
@@ -61,9 +62,9 @@ emojiKeyboard.prototype.show = function () {
     // highlight the first tab
     var i = 0;
 
+    var keyboardInstance = this;
     for (var id in this.tabs) {
 
-        var keyboardInstance = this;
         this.tabs[id].parentElement.onclick = function() { keyboardInstance.showTab(this) };
         this.tabs[id].parentElement = function () {
             this.blur()
@@ -79,6 +80,64 @@ emojiKeyboard.prototype.show = function () {
         if (i != 0) this.tabContents[id].className = 'tab-content hide';
         i++;
         i++;
+    }
+
+    //make the emoji clickable
+    var keyboardSiblings = document.getElementById("data").children;
+    for (var id in this.tabContents) {
+        var curTab = this.tabContents[id];
+        for (var i = 0; i < curTab.children.length; i++) {
+            var curEmoji = curTab.children[i];
+            if(this.elemHasClass(curEmoji, "emoji") ) {
+                //curEmoji.onfocus = function() {  }
+                curEmoji.onmousedown = function(e) { keyboardInstance.typeEmoji(this);
+                    e.preventDefault(); };
+            }
+        }
+    }
+}
+
+emojiKeyboard.prototype.typeEmoji = function(elem) {
+    //document.getElementById("data2").innerHTML += elem.outerHTML;
+
+    //var newElement = document.createElement('span');
+    //newElement.id = 'myId';
+    //newElement.innerHTML = 'Hello World!';
+    this.setEmojiAtCaret(elem.cloneNode(true));
+    //document.getElementById('data2').focus();
+    //alert(elem.getAttribute("x-emoji-unicode"));
+}
+
+emojiKeyboard.prototype.setEmojiAtCaret = function(node) {
+
+    if (typeof window.getSelection != "undefined") {
+        var sel = window.getSelection();
+        if (sel.rangeCount) {
+            var range = sel.getRangeAt(0);
+            var textNode = sel.focusNode;
+            var newOffset = sel.focusOffset + node.outerHTML.length;
+
+            sel.collapse(textNode, Math.min(textNode.length, newOffset));
+            range.collapse(false);
+            range.insertNode(node);
+            range = range.cloneRange();
+            range.selectNodeContents(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            //document.getElementById("data2").setSelectionRange(4,5);
+        }
+    } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
+        var html = (node.nodeType == 1) ? node.outerHTML : node.data;
+        var id = "marker_" + ("" + Math.random()).slice(2);
+        html += '<span id="' + id + '"></span>';
+        var textRange = document.selection.createRange();
+        textRange.collapse(false);
+        textRange.pasteHTML(html);
+        var markerSpan = document.getElementById(id);
+        textRange.moveToElementText(markerSpan);
+        textRange.select();
+        markerSpan.parentNode.removeChild(markerSpan);
     }
 }
 
@@ -112,4 +171,8 @@ emojiKeyboard.prototype.getFirstChildWithTagName = function (element, tagName) {
 emojiKeyboard.prototype.getHash = function (url) {
     var hashPos = url.lastIndexOf('#');
     return url.substring(hashPos + 1);
+}
+
+emojiKeyboard.prototype.elemHasClass = function (element, cls) {
+    return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
 }
