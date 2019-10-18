@@ -1,0 +1,23 @@
+name: Releases
+
+on:
+  schedule:
+  - cron: "0 14 * * 5" 
+
+jobs:
+  prepare_weekly_release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@develop
+    - name: Run a one-line script
+      uses: peterjgrainger/action-create-branch@v1.0.0
+      with:
+        branch: 'release/weekly'
+    - name: Create release PR
+      uses: bakunyo/git-pr-release-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GIT_PR_RELEASE_BRANCH_STAGING: "release/weekly"
